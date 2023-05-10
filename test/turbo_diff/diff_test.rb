@@ -208,6 +208,31 @@ class DiffTest < ActiveSupport::TestCase
     ]
   end
 
+  test "replace and delete attributes in nested elements" do
+    from_html = <<-HTML
+    from_html = <<-HTML
+      <root>
+        <child-1 attribute_1="1" attribute_2="2"></child-1> 
+        <child-2 id="2" class="some-class"></child-2> 
+        <child-3 attribute-to-delete="please"></child-3> 
+      </root>
+    HTML
+
+    to_html = <<-HTML
+      <root>
+        <child-1 attribute_1="a"></child-1> 
+        <child-2 id="2" class="some-other-class"></child-2> 
+        <child-3></child-3> 
+      </root>
+    HTML
+
+    assert_diff from_html, to_html, [
+      {:type=>:set_attributes, :selector=>"0/0", :attributes=>{:attribute_1=>"a"}, :deleted_attributes=>["attribute_2"]},
+      {:type=>:set_attributes, :selector=>"0/1", :attributes=>{:id=>"2", :class=>"some-other-class"}},
+      {:type=>:set_attributes, :selector=>"0/2", :deleted_attributes=>["attribute-to-delete"]}
+    ]
+  end
+
   private
     def assert_diff(from_html, to_html, expected_changes)
       diff = TurboDiff::Diff.new(from_html, to_html)
