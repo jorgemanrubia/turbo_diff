@@ -22,6 +22,10 @@ class TurboDiff::Diff::ChangeCollector
         changes << TurboDiff::Change.replace(cursor.to_selector, html: to_node.to_html)
       end
 
+      add_changes_from_children(from_node, to_node, cursor)
+    end
+
+    def add_changes_from_children(from_node, to_node, cursor)
       from_node.element_children.each_with_index do |from_child, index|
         to_child = to_node.element_children[index]
         add_changes(from_child, to_child, cursor.down(index))
