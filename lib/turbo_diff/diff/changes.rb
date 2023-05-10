@@ -117,9 +117,9 @@ class TurboDiff::Diff::Changes
 
       change_properties = { added: attributes.presence, deleted: deleted_attributes.presence }.compact
 
-      changes << TurboDiff::Change.attributes(cursor.to_selector, **change_properties)
-
-      attributes
+      unless change_properties.empty?
+        changes << TurboDiff::Change.attributes(cursor.to_selector, **change_properties)
+      end
     end
 
     def equal_nodes?(node_1, node_2)
