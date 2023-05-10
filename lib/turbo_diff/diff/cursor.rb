@@ -5,8 +5,8 @@ class TurboDiff::Diff::Cursor
     @positions = positions
   end
 
-  def down
-    self.class.new(positions + [ 0 ])
+  def down(index)
+    self.class.new(positions + [ index ])
   end
 
   def to_selector
