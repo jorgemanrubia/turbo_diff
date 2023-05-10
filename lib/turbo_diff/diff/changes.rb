@@ -1,5 +1,5 @@
-class TurboDiff::Diff::ChangeCollector
-  attr_reader :changes
+class TurboDiff::Diff::Changes
+  delegate :as_json, to: :changes
 
   def initialize(from_html, to_html)
     @from_html = from_html
@@ -11,7 +11,7 @@ class TurboDiff::Diff::ChangeCollector
   end
 
   private
-    attr_reader :cursor
+    attr_reader :changes, :cursor
 
     def collect_changes
       add_changes(@from_html.first_element_child, @to_html.first_element_child, cursor)
@@ -115,9 +115,9 @@ class TurboDiff::Diff::ChangeCollector
         attributes[name.to_sym] = to_attributes[name]
       end
 
-      change_properties = { attributes: attributes.presence, deleted_attributes: deleted_attributes.presence }.compact
+      change_properties = { added: attributes.presence, deleted: deleted_attributes.presence }.compact
 
-      changes << TurboDiff::Change.set_attributes(cursor.to_selector, **change_properties)
+      changes << TurboDiff::Change.attributes(cursor.to_selector, **change_properties)
 
       attributes
     end

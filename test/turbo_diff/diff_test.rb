@@ -204,7 +204,7 @@ class DiffTest < ActiveSupport::TestCase
     HTML
 
     assert_diff from_html, to_html, [
-      { type: :set_attributes, selector: "0", attributes: { class: "class-2" } },
+      { type: :attributes, selector: "0", added: { class: "class-2" } },
     ]
   end
 
@@ -227,16 +227,16 @@ class DiffTest < ActiveSupport::TestCase
     HTML
 
     assert_diff from_html, to_html, [
-      {:type=>:set_attributes, :selector=>"0/0", :attributes=>{:attribute_1=>"a"}, :deleted_attributes=>["attribute_2"]},
-      {:type=>:set_attributes, :selector=>"0/1", :attributes=>{:id=>"2", :class=>"some-other-class"}},
-      {:type=>:set_attributes, :selector=>"0/2", :deleted_attributes=>["attribute-to-delete"]}
+      {:type=>:attributes, :selector=>"0/0", :added=>{:attribute_1=>"a"}, :deleted=>["attribute_2"]},
+      {:type=>:attributes, :selector=>"0/1", :added=>{:id=>"2", :class=>"some-other-class"}},
+      {:type=>:attributes, :selector=>"0/2", :deleted=>["attribute-to-delete"]}
     ]
   end
 
   private
     def assert_diff(from_html, to_html, expected_changes)
-      diff = TurboDiff::Diff.new(from_html, to_html)
-      assert_equal expected_changes, diff.changes
+      diff = TurboDiff.diff(from_html, to_html)
+      assert_equal expected_changes, diff.as_json
     end
 end
 

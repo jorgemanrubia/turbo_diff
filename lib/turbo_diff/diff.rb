@@ -5,13 +5,9 @@ class TurboDiff::Diff
   end
 
   def changes
-    change_collector.changes.as_json
+    @changes ||= Changes.new(from_html, to_html)
   end
 
   private
     attr_reader :from_html, :to_html
-
-    def change_collector
-      @change_collector ||= ChangeCollector.new(from_html, to_html)
-    end
 end
