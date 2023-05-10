@@ -57,6 +57,7 @@ class TurboDiff::Diff::ChangeCollector
         end
       end
 
+      # Rest of from nodes
       from_nodes.each.with_index do |from_node, index|
         to_node = to_nodes[index]
         next if processed_from_nodes.include?(from_node) || processed_to_nodes.include?(to_node)
@@ -70,6 +71,7 @@ class TurboDiff::Diff::ChangeCollector
         processed_from_nodes << from_node
       end
 
+      # Rest of to nodes
       to_nodes.each do |to_node|
         next if processed_to_nodes.include?(to_node)
         mapped_nodes << [nil, to_node]
@@ -77,51 +79,6 @@ class TurboDiff::Diff::ChangeCollector
       end
 
       mapped_nodes
-    end
-
-    def longest_common_subsequence(a, b)
-      lengths = Array.new(a.length + 1) { Array.new(b.length + 1, 0) }
-
-      a.each_with_index do |x, i|
-        b.each_with_index do |y, j|
-          if equal_nodes?(x, y)
-            lengths[i + 1][j + 1] = lengths[i][j] + 1
-          else
-            lengths[i + 1][j + 1] = [lengths[i + 1][j], lengths[i][j + 1]].max
-          end
-        end
-      end
-
-      result = []
-      x, y = a.length, b.length
-
-      while x > 0 && y > 0
-        if lengths[x][y] == lengths[x - 1][y]
-          x -= 1
-        elsif lengths[x][y] == lengths[x][y - 1]
-          y -= 1
-        else
-          result.unshift(a[x - 1])
-          x -= 1
-          y -= 1
-        end
-      end
-
-      result
-    end
-
-    def find_identical_node(nodes, node)
-      index = nil
-      found = nodes.find.with_index do |other_node, i|
-        index = i
-        identical_nodes?(node, other_node)
-      end
-
-      [found, index] if found
-    end
-
-    def identical_nodes?(node, other_node)
-      node["id"] && other_node["id"] && node["id"] == other_node["id"]
     end
 
     def equal_nodes?(node_1, node_2)

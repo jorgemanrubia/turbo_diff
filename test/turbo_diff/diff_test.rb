@@ -122,6 +122,55 @@ class DiffTest < ActiveSupport::TestCase
     ]
   end
 
+  test "insert missing children at the root where it can't match existing nodes by position" do
+    from_html = <<-HTML
+      <root>
+        <child-2></child-2> 
+      </root>
+    HTML
+
+    to_html = <<-HTML
+      <root>
+        <child-1></child-1> 
+        <child-2></child-2> 
+        <child-3></child-3> 
+      </root>
+    HTML
+
+    assert_diff from_html, to_html, [
+      { type: :replace, selector: "0/0", html: "<child-1></child-1>" },
+      { type: :insert, selector: "0/1", html: "<child-2></child-2>" },
+      { type: :insert, selector: "0/2", html: "<child-3></child-3>" }
+    ]
+  end
+
+  test "replace 2-level nested nodes" do
+    from_html = <<-HTML
+      <root>
+        <child-1></child-1> 
+        <child-2>
+          <target-child></target-child>
+        </child-2> 
+        <child-3></child-3> 
+      </root>
+    HTML
+
+    to_html = <<-HTML
+      <root>
+        <child-1></child-1> 
+        <child-2>
+          <child-replaced></child-replaced>
+        </child-2> 
+        <child-3></child-3> 
+      </root>
+    HTML
+
+    assert_diff from_html, to_html, [
+      { type: :replace, selector: "0/1/0", html: "<child-replaced></child-replaced>" },
+    ]
+  end
+
+
   private
     def assert_diff(from_html, to_html, expected_changes)
       diff = TurboDiff::Diff.new(from_html, to_html)
