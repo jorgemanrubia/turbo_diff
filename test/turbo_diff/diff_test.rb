@@ -171,6 +171,43 @@ class DiffTest < ActiveSupport::TestCase
   end
 
 
+  test "insert missing children at the root matching by id" do
+    from_html = <<-HTML
+      <root>
+        <child-2 id="2"></child-2> 
+      </root>
+    HTML
+
+    to_html = <<-HTML
+      <root>
+        <child-1></child-1> 
+        <child-2 id="2"></child-2> 
+        <child-3></child-3> 
+      </root>
+    HTML
+
+    assert_diff from_html, to_html, [
+      { type: :insert, selector: "0/0", html: "<child-1></child-1>" },
+      { type: :insert, selector: "0/2", html: "<child-3></child-3>" }
+    ]
+  end
+
+  test "replace root attributes" do
+    from_html = <<-HTML
+      <root class="class-1">
+      </root>
+    HTML
+
+    to_html = <<-HTML
+      <root class="class-2">
+      </root>
+    HTML
+
+    assert_diff from_html, to_html, [
+      { type: :set_attributes, selector: "0", attributes: { class: "class-2" } },
+    ]
+  end
+
   private
     def assert_diff(from_html, to_html, expected_changes)
       diff = TurboDiff::Diff.new(from_html, to_html)
