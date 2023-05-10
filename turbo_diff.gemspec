@@ -14,4 +14,5 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "rails", ">= 7.0.4"
   spec.add_dependency "zeitwerk"
+  spec.add_dependency "nokogiri"
 end

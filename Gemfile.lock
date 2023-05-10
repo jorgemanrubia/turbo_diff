@@ -2,6 +2,7 @@ PATH
   remote: .
   specs:
     turbo_diff (0.1.0)
+      nokogiri
       rails (>= 7.0.4)
       zeitwerk
 

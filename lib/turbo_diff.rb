@@ -6,5 +6,9 @@ loader = Zeitwerk::Loader.for_gem
 loader.setup
 
 module TurboDiff
-  # Your code goes here...
+  class << self
+    def diff(from_html_string, to_html_string)
+      Diff.new(from_html_string, to_html_string).changes
+    end
+  end
 end
