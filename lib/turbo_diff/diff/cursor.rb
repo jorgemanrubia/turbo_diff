@@ -9,7 +9,9 @@ class TurboDiff::Diff::Cursor
     self.class.new(positions + [ 0 ])
   end
 
-  def to_s
+  def to_selector
     @positions.join("/")
   end
+
+  alias to_s to_selector
 end
