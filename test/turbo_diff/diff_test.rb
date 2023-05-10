@@ -1,13 +1,13 @@
 require "test_helper"
 
 class DiffTest < ActiveSupport::TestCase
-  test "root of different type" do
+  test "replace root of different type" do
     assert_diff "<root-1></root-1>", "<root-2></root-2>", [
       { type: :replace, selector: "0", html: "<root-2></root-2>" }
     ]
   end
 
-  test "child of different type" do
+  test "replace only child of different type" do
     from_html = <<-HTML
       <root>
         <child-1></child-1> 
