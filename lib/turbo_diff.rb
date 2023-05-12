@@ -7,8 +7,11 @@ loader.setup
 
 module TurboDiff
   class << self
-    def diff(from_html_string, to_html_string)
-      Diff.new(from_html_string, to_html_string).changes
+    def diff(from_html_document_string, to_html_document_string)
+      from_html_document = Nokogiri::HTML5(from_html_document_string)
+      to_html_document = Nokogiri::HTML5(to_html_document_string)
+
+      Diff.new(from_html_document, to_html_document).changes
     end
   end
 end

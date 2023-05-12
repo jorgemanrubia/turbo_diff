@@ -23,7 +23,7 @@ class TurboDiff::Change
 
   alias inspect to_s
 
-  def as_json
+  def as_json(...)
     { type: type, selector: selector }.merge(data)
   end
 end

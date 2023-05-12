@@ -24,6 +24,7 @@ class TurboDiff::Middleware
       def process
         if processable?
           response.content_type = "text/vnd.turbo-diff.json"
+          response.body = TurboDiff.diff(cached_response_html, response.body).to_json
         end
 
         cache_current_response if cacheable?

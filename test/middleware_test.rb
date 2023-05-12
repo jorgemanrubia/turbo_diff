@@ -32,10 +32,16 @@ class MiddlewareTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_includes response.content_type, "text/vnd.turbo-diff.json"
+
+    assert_diff_response [ { "type"=>"insert", "selector"=>"0/1/2/1", "html"=>"<li id=\"post_926854805\"><a href=\"/posts/926854805\">Some new post</a></li>" } ]
   end
 
   private
     def accept_turbo_diff_header
       { "Accept" => "text/vnd.turbo-diff.json, text/html, application/xhtml+xml" }
+    end
+
+    def assert_diff_response(expected_changes)
+      assert_changes expected_changes, JSON.parse(response.body)
     end
 end

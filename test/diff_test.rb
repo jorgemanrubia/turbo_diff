@@ -355,9 +355,39 @@ class DiffTest < ActiveSupport::TestCase
     ]
   end
 
+ test "support doctype in HTML declaration" do
+    from_html = <<-HTML
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Old title</title>
+        </head>
+        <body>
+        </body>
+      </html>
+    HTML
+
+   to_html = <<-HTML
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>New title</title>
+        </head>
+        <body>
+        </body>
+      </html>
+   HTML
+
+    assert_diff from_html, to_html, [
+      { type: :replace, selector: "0/0/0/0", text: "New title" }
+    ]
+  end
+
+
   private
-    def assert_diff(from_html, to_html, expected_changes)
-      diff = TurboDiff.diff(from_html, to_html)
-      assert_equal expected_changes, diff.as_json
+    def assert_diff(from_html_string, to_html_string, expected_changes)
+      from_html, to_html = parse_html(from_html_string), parse_html(to_html_string)
+      changes = TurboDiff::Diff.new(from_html, to_html).changes
+      assert_changes expected_changes, changes.as_json
     end
 end

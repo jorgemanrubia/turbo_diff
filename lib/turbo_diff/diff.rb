@@ -1,7 +1,7 @@
 class TurboDiff::Diff
-  def initialize(from_html_string, to_html_string)
-    @from_html = Nokogiri::HTML5.fragment(from_html_string)
-    @to_html = Nokogiri::HTML5.fragment(to_html_string)
+  def initialize(from_html, to_html)
+    @from_html = from_html
+    @to_html = to_html
   end
 
   def changes
