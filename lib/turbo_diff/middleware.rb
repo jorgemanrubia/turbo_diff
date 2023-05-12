@@ -7,11 +7,14 @@ class TurboDiff::Middleware
 
   def call(env)
     request = ActionDispatch::Request.new(env)
-    response = ActionDispatch::Response.new(*@app.call(env))
 
-    DiffInterceptor.new(request, response).process
-
-    response.to_a
+    if request.if_none_match.present?
+      response = ActionDispatch::Response.new(*@app.call(env))
+      DiffInterceptor.new(request, response).process
+      response.to_a
+    else
+      @app.call(env)
+    end
   end
 
   private

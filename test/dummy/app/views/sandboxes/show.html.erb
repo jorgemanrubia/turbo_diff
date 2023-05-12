@@ -1,0 +1,10 @@
+<h1>Sandbox</h1>
+
+<%= @content&.html_safe %>
+
+<h2>New content</h2>
+
+<%= form_tag sandbox_path, method: :post do %>
+  <%= text_area_tag :sandbox_content, @content, style: "height: 300px; width: 100%;" %>
+  <%= submit_tag "Submit" %>
+<% end %>

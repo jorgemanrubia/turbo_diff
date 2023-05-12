@@ -5,6 +5,10 @@ require "zeitwerk"
 loader = Zeitwerk::Loader.for_gem
 loader.setup
 
+require "importmap-rails"
+require "turbo-rails"
+require "stimulus-rails"
+
 module TurboDiff
   class << self
     def diff(from_html_document_string, to_html_document_string)

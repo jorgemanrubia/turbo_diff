@@ -1,7 +1,6 @@
 Rails.application.routes.draw do
-  resources :posts
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  mount TurboDiff::Engine => "/turbo_diff"
 
-  # Defines the root path route ("/")
-  # root "articles#index"
+  resources :posts
+  resource :sandbox
 end
