@@ -17,6 +17,14 @@ module TurboDiff
       end
     end
 
+    initializer "turbo_diff.middleware" do |app|
+      app.config.middleware.use TurboDiff::Middleware
+    end
+
+    initializer "turbo_diff.mimetype" do
+      Mime::Type.register "text/vnd.turbo-diff.json", :turbo_diff
+    end
+
     initializer "turbo_diff.assets" do |app|
       if Rails.application.config.respond_to?(:assets)
         app.config.assets.paths << root.join("app/javascript")

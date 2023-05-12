@@ -1,4 +1,6 @@
 class PostsController < ApplicationController
+  before_action :ensure_session
+
   before_action :set_post, only: %i[ show edit update destroy ]
 
   # GET /posts
@@ -56,5 +58,9 @@ class PostsController < ApplicationController
     # Only allow a list of trusted parameters through.
     def post_params
       params.require(:post).permit(:title, :body)
+    end
+
+    def ensure_session
+      session[:user_id] = 123
     end
 end
