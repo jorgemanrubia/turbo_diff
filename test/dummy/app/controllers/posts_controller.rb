@@ -4,6 +4,8 @@ class PostsController < ApplicationController
   # GET /posts
   def index
     @posts = Post.all
+
+    fresh_when etag: @posts
   end
 
   # GET /posts/1
