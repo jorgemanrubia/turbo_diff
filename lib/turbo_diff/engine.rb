@@ -18,8 +18,10 @@ module TurboDiff
     end
 
     initializer "turbo_diff.assets" do |app|
-      app.config.assets.paths << root.join("app/javascript")
-      app.config.assets.precompile += %w[ turbo_diff_manifest ]
+      if Rails.application.config.respond_to?(:assets)
+        app.config.assets.paths << root.join("app/javascript")
+        app.config.assets.precompile += %w[ turbo_diff_manifest ]
+      end
     end
 
     initializer "turbo_diff.importmap", before: "importmap" do |app|
