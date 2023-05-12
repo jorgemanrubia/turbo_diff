@@ -7,13 +7,13 @@ class TurboDiff::Middleware
 
   def call(env)
     request = ActionDispatch::Request.new(env)
+    status, headers, body = @app.call(env)
+    response = ActionDispatch::Response.new(status, headers, body)
 
-    if request.if_none_match.present?
-      response = ActionDispatch::Response.new(*@app.call(env))
-      DiffInterceptor.new(request, response).process
+    if DiffInterceptor.new(request, response).process
       response.to_a
     else
-      @app.call(env)
+      [ status, headers, body ]
     end
   end
 
@@ -25,12 +25,13 @@ class TurboDiff::Middleware
       end
 
       def process
+        cache_current_response if cacheable?
+
         if processable?
           response.content_type = "text/vnd.turbo-diff.json"
           response.body = TurboDiff.diff(cached_response_html, response.body).to_json
+          true
         end
-
-        cache_current_response if cacheable?
       end
 
       private
@@ -53,7 +54,7 @@ class TurboDiff::Middleware
         end
 
         def cache_key(etag)
-          @cache_key ||= "#{request.session.id}-#{request.path}-#{etag}"
+          "#{request.session.id}-#{request.path}-#{etag}"
         end
 
         def cacheable?
