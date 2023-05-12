@@ -251,6 +251,50 @@ class DiffTest < ActiveSupport::TestCase
     ]
   end
 
+  test "update text and elements nodes in root element" do
+    from_html = <<-HTML
+      <root>
+        hola
+        <br>
+        jorge
+      </root>
+    HTML
+
+    to_html = <<-HTML
+      <root>
+        adios
+        <br>
+        jorge
+      </root>
+    HTML
+
+    assert_diff from_html, to_html, [
+      { type: :replace, selector: "0/0", text: "adios" },
+    ]
+  end
+
+  test "update text and elements nodes in root element with initial match" do
+    from_html = <<-HTML
+      <root>
+        I am reading
+        <br>
+        Dune
+      </root>
+    HTML
+
+    to_html = <<-HTML
+      <root>
+        I am reading
+        <br>
+        The Lord of the Rings
+      </root>
+    HTML
+
+    assert_diff from_html, to_html, [
+      { type: :replace, selector: "0/2", text: "The Lord of the Rings" },
+    ]
+  end
+
   private
     def assert_diff(from_html, to_html, expected_changes)
       diff = TurboDiff.diff(from_html, to_html)
