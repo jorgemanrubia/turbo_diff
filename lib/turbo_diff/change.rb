@@ -1,7 +1,7 @@
 class TurboDiff::Change
   attr_reader :selector, :type, :data
 
-  CHANGE_TYPES = %i[ replace insert attributes ]
+  CHANGE_TYPES = %i[ replace insert delete attributes ]
 
   class << self
     CHANGE_TYPES.each do |change_type|

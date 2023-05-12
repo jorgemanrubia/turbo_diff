@@ -233,6 +233,45 @@ class DiffTest < ActiveSupport::TestCase
     ]
   end
 
+  test "delete elements in the root node" do
+    from_html = <<-HTML
+      <root>
+        <child-1></child-1> 
+        <child-2></child-2> 
+      </root>
+    HTML
+
+    to_html = <<-HTML
+      <root>
+        <child-1></child-1> 
+      </root>
+    HTML
+
+    assert_diff from_html, to_html, [
+      { type: :delete, selector: "0/1" }
+    ]
+  end
+
+  test "delete and replace elements" do
+    from_html = <<-HTML
+      <root>
+        <child-1></child-1> 
+        <child-2></child-2> 
+      </root>
+    HTML
+
+    to_html = <<-HTML
+      <root>
+        <child-2></child-2> 
+      </root>
+    HTML
+
+    assert_diff from_html, to_html, [
+      { type: :replace, selector: "0/0", html: "<child-2></child-2>" },
+      { type: :delete, selector: "0/1" }
+    ]
+  end
+
   test "update text in root element" do
     from_html = <<-HTML
       <root>

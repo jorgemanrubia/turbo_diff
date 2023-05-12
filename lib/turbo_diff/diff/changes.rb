@@ -26,6 +26,8 @@ class TurboDiff::Diff::Changes
         else
           changes << TurboDiff::Change.replace(cursor.to_selector, **change_properties_for(to_node))
         end
+      elsif !to_node
+        changes << TurboDiff::Change.delete(cursor.to_selector)
       elsif !from_node
         changes << TurboDiff::Change.insert(cursor.to_selector, **change_properties_for(to_node))
       end
@@ -44,7 +46,7 @@ class TurboDiff::Diff::Changes
     end
 
     def diffable_nodes(nodes)
-      nodes.find_all { |node| node.text? || node.element? }
+      nodes.find_all { |node| (node.text? && node.text.present?) || node.element? }
     end
 
     def map_nodes(from_nodes, to_nodes)
