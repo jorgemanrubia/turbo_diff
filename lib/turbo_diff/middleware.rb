@@ -53,7 +53,7 @@ class TurboDiff::Middleware
         end
 
         def cacheable?
-          response_etag.present?
+          response_etag.present? && response.successful? && request.get? && response.media_type == "text/html"
         end
 
         def cache_current_response
