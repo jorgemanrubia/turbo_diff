@@ -15,4 +15,14 @@ Gem::Specification.new do |spec|
   spec.add_dependency "rails", ">= 7.0.4"
   spec.add_dependency "zeitwerk"
   spec.add_dependency "nokogiri"
+
+  spec.add_dependency 'importmap-rails'
+  spec.add_dependency 'turbo-rails'
+  spec.add_dependency 'stimulus-rails'
+
+  spec.add_development_dependency "capybara"
+  spec.add_development_dependency "selenium-webdriver"
+  spec.add_development_dependency "rubocop"
+  spec.add_development_dependency "rubocop-performance"
+  spec.add_development_dependency "rubocop-rails"
 end
