@@ -10,13 +10,13 @@ class DiffTest < ActiveSupport::TestCase
   test "replace only child of different type" do
     from_html = <<-HTML
       <root>
-        <child-1></child-1>#{' '}
+        <child-1></child-1>
       </root>
     HTML
 
     to_html = <<-HTML
       <root>
-        <child-2></child-2>#{' '}
+        <child-2></child-2>
       </root>
     HTML
 
@@ -28,15 +28,15 @@ class DiffTest < ActiveSupport::TestCase
   test "replace first child of different type" do
     from_html = <<-HTML
       <root>
-        <child-1></child-1>#{' '}
-        <child-2></child-2>#{' '}
+        <child-1></child-1>
+        <child-2></child-2>
       </root>
     HTML
 
     to_html = <<-HTML
       <root>
-        <child-3></child-3>#{' '}
-        <child-2></child-2>#{' '}
+        <child-3></child-3>
+        <child-2></child-2>
       </root>
     HTML
 
@@ -48,15 +48,15 @@ class DiffTest < ActiveSupport::TestCase
   test "replace last child of different type" do
     from_html = <<-HTML
       <root>
-        <child-1></child-1>#{' '}
-        <child-2></child-2>#{' '}
+        <child-1></child-1>
+        <child-2></child-2>
       </root>
     HTML
 
     to_html = <<-HTML
       <root>
-        <child-1></child-1>#{' '}
-        <child-3></child-3>#{' '}
+        <child-1></child-1>
+        <child-3></child-3>
       </root>
     HTML
 
@@ -73,7 +73,7 @@ class DiffTest < ActiveSupport::TestCase
 
     to_html = <<-HTML
       <root>
-        <child-1></child-1>#{' '}
+        <child-1></child-1>
       </root>
     HTML
 
@@ -90,8 +90,8 @@ class DiffTest < ActiveSupport::TestCase
 
     to_html = <<-HTML
       <root>
-        <child-1></child-1>#{' '}
-        <child-2></child-2>#{' '}
+        <child-1></child-1>
+        <child-2></child-2>
       </root>
     HTML
 
@@ -104,15 +104,15 @@ class DiffTest < ActiveSupport::TestCase
   test "insert missing children at the root respecting existing nodes matched by position" do
     from_html = <<-HTML
       <root>
-        <child-1></child-1>#{' '}
+        <child-1></child-1>
       </root>
     HTML
 
     to_html = <<-HTML
       <root>
-        <child-1></child-1>#{' '}
-        <child-2></child-2>#{' '}
-        <child-3></child-3>#{' '}
+        <child-1></child-1>
+        <child-2></child-2>
+        <child-3></child-3>
       </root>
     HTML
 
@@ -125,15 +125,15 @@ class DiffTest < ActiveSupport::TestCase
   test "insert missing children at the root where it can't match existing nodes by position" do
     from_html = <<-HTML
       <root>
-        <child-2></child-2>#{' '}
+        <child-2></child-2>
       </root>
     HTML
 
     to_html = <<-HTML
       <root>
-        <child-1></child-1>#{' '}
-        <child-2></child-2>#{' '}
-        <child-3></child-3>#{' '}
+        <child-1></child-1>
+        <child-2></child-2>
+        <child-3></child-3>
       </root>
     HTML
 
@@ -147,21 +147,21 @@ class DiffTest < ActiveSupport::TestCase
   test "replace 2-level nested nodes" do
     from_html = <<-HTML
       <root>
-        <child-1></child-1>#{' '}
+        <child-1></child-1>
         <child-2>
           <target-child></target-child>
-        </child-2>#{' '}
-        <child-3></child-3>#{' '}
+        </child-2>
+        <child-3></child-3>
       </root>
     HTML
 
     to_html = <<-HTML
       <root>
-        <child-1></child-1>#{' '}
+        <child-1></child-1>
         <child-2>
           <child-replaced></child-replaced>
-        </child-2>#{' '}
-        <child-3></child-3>#{' '}
+        </child-2>
+        <child-3></child-3>
       </root>
     HTML
 
@@ -174,15 +174,15 @@ class DiffTest < ActiveSupport::TestCase
   test "insert missing children at the root matching by id" do
     from_html = <<-HTML
       <root>
-        <child-2 id="2"></child-2>#{' '}
+        <child-2 id="2"></child-2>
       </root>
     HTML
 
     to_html = <<-HTML
       <root>
-        <child-1></child-1>#{' '}
-        <child-2 id="2"></child-2>#{' '}
-        <child-3></child-3>#{' '}
+        <child-1></child-1>
+        <child-2 id="2"></child-2>
+        <child-3></child-3>
       </root>
     HTML
 
@@ -212,17 +212,17 @@ class DiffTest < ActiveSupport::TestCase
     from_html = <<-HTML
     from_html = <<-HTML
       <root>
-        <child-1 attribute_1="1" attribute_2="2"></child-1>#{' '}
-        <child-2 id="2" class="some-class"></child-2>#{' '}
-        <child-3 attribute-to-delete="please"></child-3>#{' '}
+        <child-1 attribute_1="1" attribute_2="2"></child-1>
+        <child-2 id="2" class="some-class"></child-2>
+        <child-3 attribute-to-delete="please"></child-3>
       </root>
     HTML
 
     to_html = <<-HTML
       <root>
-        <child-1 attribute_1="a"></child-1>#{' '}
-        <child-2 id="2" class="some-other-class"></child-2>#{' '}
-        <child-3></child-3>#{' '}
+        <child-1 attribute_1="a"></child-1>
+        <child-2 id="2" class="some-other-class"></child-2>
+        <child-3></child-3>
       </root>
     HTML
 
@@ -236,14 +236,14 @@ class DiffTest < ActiveSupport::TestCase
   test "delete elements in the root node" do
     from_html = <<-HTML
       <root>
-        <child-1></child-1>#{' '}
-        <child-2></child-2>#{' '}
+        <child-1></child-1>
+        <child-2></child-2>
       </root>
     HTML
 
     to_html = <<-HTML
       <root>
-        <child-1></child-1>#{' '}
+        <child-1></child-1>
       </root>
     HTML
 
@@ -255,14 +255,14 @@ class DiffTest < ActiveSupport::TestCase
   test "delete and replace elements" do
     from_html = <<-HTML
       <root>
-        <child-1></child-1>#{' '}
-        <child-2></child-2>#{' '}
+        <child-1></child-1>
+        <child-2></child-2>
       </root>
     HTML
 
     to_html = <<-HTML
       <root>
-        <child-2></child-2>#{' '}
+        <child-2></child-2>
       </root>
     HTML
 
