@@ -1,5 +1,5 @@
 require "turbo_diff/version"
-require "turbo_diff/railtie"
+require "turbo_diff/engine"
 
 require "zeitwerk"
 loader = Zeitwerk::Loader.for_gem
