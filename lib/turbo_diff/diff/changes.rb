@@ -21,13 +21,13 @@ class TurboDiff::Diff::Changes
       if from_node && to_node
         if equal_nodes?(from_node, to_node)
           add_changes_from_children(from_node, to_node, cursor)
-        elsif same_type?(from_node, to_node)
+        elsif same_name?(from_node, to_node)
           add_attribute_changes(from_node, to_node, cursor)
         else
-          changes << TurboDiff::Change.replace(cursor.to_selector, html: to_node.to_html)
+          changes << TurboDiff::Change.replace(cursor.to_selector, **change_properties_for(to_node))
         end
       elsif !from_node
-        changes << TurboDiff::Change.insert(cursor.to_selector, html: to_node.to_html)
+        changes << TurboDiff::Change.insert(cursor.to_selector, **change_properties_for(to_node))
       end
     end
 
@@ -38,9 +38,13 @@ class TurboDiff::Diff::Changes
     end
 
     def for_each_children(from_node, to_node)
-      map_nodes(from_node.element_children, to_node.element_children).each.with_index do |(from_child, to_child), index|
+      map_nodes(diffable_nodes(from_node.children), diffable_nodes(to_node.children)).each.with_index do |(from_child, to_child), index|
         yield from_child, to_child, index
       end
+    end
+
+    def diffable_nodes(nodes)
+      nodes.find_all { |node| node.text? || node.element? }
     end
 
     def map_nodes(from_nodes, to_nodes)
@@ -123,13 +127,17 @@ class TurboDiff::Diff::Changes
     end
 
     def equal_nodes?(node_1, node_2)
-      if node_1 && node_2
-        same_type?(node_1, node_2) && same_attributes?(node_1, node_2)
+      if node_1 && node_2 && node_1.type == node_2.type
+        if node_1.element?
+          same_name?(node_1, node_2) && same_attributes?(node_1, node_2)
+        else
+          same_text?(node_1, node_2)
+        end
       end
     end
 
-    def same_type?(node_1, node_2)
-      node_1.name == node_2.name
+    def same_name?(node_1, node_2)
+      node_1.element? && node_2.element? && node_1.name == node_2.name
     end
 
     def same_attributes?(node_1, node_2)
@@ -137,5 +145,17 @@ class TurboDiff::Diff::Changes
       node2_attributes = node_2.attributes.transform_values(&:value)
 
       node1_attributes == node2_attributes
+    end
+
+    def same_text?(node_1, node_2)
+      node_1.text? && node_2.text? && node_1.text == node_2.text
+    end
+
+    def change_properties_for(node)
+      if node.element?
+        { html: node.to_html }
+      else
+        { text: node.text.strip }
+      end
     end
 end

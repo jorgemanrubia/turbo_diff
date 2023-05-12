@@ -233,6 +233,24 @@ class DiffTest < ActiveSupport::TestCase
     ]
   end
 
+  test "update text in root element" do
+    from_html = <<-HTML
+      <root>
+        hola
+      </root>
+    HTML
+
+    to_html = <<-HTML
+      <root>
+        adios
+      </root>
+    HTML
+
+    assert_diff from_html, to_html, [
+      { type: :replace, selector: "0/0", text: "adios" },
+    ]
+  end
+
   private
     def assert_diff(from_html, to_html, expected_changes)
       diff = TurboDiff.diff(from_html, to_html)

@@ -26,6 +26,4 @@ class TurboDiff::Change
   def as_json
     { type: type, selector: selector }.merge(data)
   end
-
-
 end
