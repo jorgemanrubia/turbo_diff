@@ -1,5 +1,6 @@
 class TurboDiff::Middleware
   CACHE_EXPIRES_IN = 1.hour
+  TURBO_DIFF_MIME_TYPE = "text/vnd.turbo-diff.json"
 
   def initialize(app)
     @app = app
@@ -28,7 +29,7 @@ class TurboDiff::Middleware
         cache_current_response if cacheable?
 
         if processable?
-          response.content_type = "text/vnd.turbo-diff.json"
+          response.content_type = TURBO_DIFF_MIME_TYPE
           response.body = TurboDiff.diff(cached_response_html, response.body).to_json
           true
         end
