@@ -66,12 +66,12 @@ class TurboDiff::Diff::Changes
             to_node = to_nodes[i]
             next if processed_to_nodes.include?(to_node)
 
-            mapped_nodes << [nil, to_node]
+            mapped_nodes << [ nil, to_node ]
             processed_to_nodes << to_node
           end
 
           # Process the node matched by id
-          mapped_nodes << [from_node, matched_to_node]
+          mapped_nodes << [ from_node, matched_to_node ]
           processed_to_nodes << matched_to_node
           processed_from_nodes << from_node
         end
@@ -84,10 +84,10 @@ class TurboDiff::Diff::Changes
 
         # If same position, name and attributes, we consider it a match
         if equal_nodes?(from_node, to_node)
-          mapped_nodes << [from_node, to_node]
+          mapped_nodes << [ from_node, to_node ]
           processed_to_nodes << to_node
         else
-          mapped_nodes << [from_node, nil]
+          mapped_nodes << [ from_node, nil ]
         end
         processed_from_nodes << from_node
       end
@@ -95,7 +95,7 @@ class TurboDiff::Diff::Changes
       # Rest of "to" nodes
       to_nodes.each do |to_node|
         next if processed_to_nodes.include?(to_node)
-        mapped_nodes << [nil, to_node]
+        mapped_nodes << [ nil, to_node ]
         processed_to_nodes << to_node
       end
 

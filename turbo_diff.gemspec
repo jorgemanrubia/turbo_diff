@@ -3,8 +3,8 @@ require_relative "lib/turbo_diff/version"
 Gem::Specification.new do |spec|
   spec.name = "turbo_diff"
   spec.version = TurboDiff::VERSION
-  spec.authors = ["Jorge Manrubia"]
-  spec.email = ["jorge@hey.com"]
+  spec.authors = [ "Jorge Manrubia" ]
+  spec.email = [ "jorge@hey.com" ]
   spec.summary = "Diff rendering engine for Turbo"
   spec.license = "MIT"
 
