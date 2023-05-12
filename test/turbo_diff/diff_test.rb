@@ -334,6 +334,27 @@ class DiffTest < ActiveSupport::TestCase
     ]
   end
 
+  test "delete text nodes" do
+    from_html = <<-HTML
+      <root>
+        I am reading
+        <br>
+        Dune
+      </root>
+    HTML
+
+    to_html = <<-HTML
+      <root>
+        I am reading
+        <br>
+      </root>
+    HTML
+
+    assert_diff from_html, to_html, [
+      { type: :delete, selector: "0/2" },
+    ]
+  end
+
   private
     def assert_diff(from_html, to_html, expected_changes)
       diff = TurboDiff.diff(from_html, to_html)
