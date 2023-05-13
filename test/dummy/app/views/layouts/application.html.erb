@@ -6,7 +6,7 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
-    <%= tag("meta", name: "turbo-etag", content: response.etag) %>
+    <%= tag("meta", name: "turbo-etag", content: response.etag) if response.etag.present? %>
 
     <%= javascript_importmap_tags "turbo_diff" %>
   </head>

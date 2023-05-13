@@ -1,7 +1,6 @@
- class DiffChanges {
-  constructor(fromNode, toNode, changes) {
+export class DiffChanges {
+  constructor(fromNode, changes) {
     this.fromNode = fromNode;
-    this.toNode = toNode;
     this.changes = changes;
   }
 
@@ -11,11 +10,7 @@
       const targetNode = this.getNodeBySelector(selector);
 
       if (type === 'replace') {
-        if (html) {
-          this.replaceNode(targetNode, html);
-        } else if (text) {
-          this.replaceNodeWithText(targetNode, text);
-        }
+        this.replaceNode(html, targetNode, text)
       } else if (type === 'insert') {
         if (html) {
           this.insertNode(targetNode, html);
@@ -32,14 +27,27 @@
     return this.fromNode;
   }
 
-  // Private
+  replaceNode(html, targetNode, text) {
+    if (html) {
+      this.replaceNode(targetNode, html);
+    } else if (text) {
+      this.replaceNodeWithText(targetNode, text);
+    }
+  }
 
   getNodeBySelector(selector) {
     const parts = selector.split('/').map(Number);
+    if(parts.shift() != 0)
+      throw "Only documents with a single root supported"
+
     let currentNode = this.fromNode;
 
     for (let i = 0; i < parts.length; i++) {
-      currentNode = currentNode.children[parts[i]];
+      const filteredNodes = Array.from(currentNode.childNodes).filter(node => {
+        return (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) || node.nodeType === Node.ELEMENT_NODE;
+      })
+
+      currentNode = filteredNodes[parts[i]];
     }
 
     return currentNode;
@@ -99,5 +107,11 @@
         targetNode.setAttribute(attrName, added[attrName]);
       });
     }
+  }
+
+  createNodesFromHTML(html) {
+    const template = document.createElement('template');
+    template.innerHTML = html;
+    return Array.from(template.content.childNodes);
   }
 }
