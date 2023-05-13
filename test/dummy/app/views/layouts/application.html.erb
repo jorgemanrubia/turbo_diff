@@ -6,7 +6,9 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
-    <%= javascript_importmap_tags %>
+    <%= tag("meta", name: "turbo-etag", content: response.etag) %>
+
+    <%= javascript_importmap_tags "turbo_diff" %>
   </head>
 
   <body>

@@ -39,7 +39,7 @@ class TurboDiff::Middleware
         attr_reader :request, :response
 
         def processable?
-          turbo_diff_request? && request_etag.present? && cached_response_html.present?
+          turbo_diff_request? && request.get? && request_etag.present? && cached_response_html.present?
         end
 
         def turbo_diff_request?
@@ -47,10 +47,11 @@ class TurboDiff::Middleware
         end
 
         def request_etag
-          @request_etag ||= request.if_none_match
+          @request_etag ||= request.if_none_match || request.headers["Turbo-Etag"]
         end
 
         def cached_response_html
+          Rails.logger.info "READING FROM #{cache_key(request_etag)}"
           @cached_html ||= Rails.cache.read(cache_key(request_etag))
         end
 
@@ -63,6 +64,8 @@ class TurboDiff::Middleware
         end
 
         def cache_current_response
+          Rails.logger.info "WRITING TO #{cache_key(response_etag)}"
+
           cache_store.write(cache_key(response_etag), response.body, expires_in: CACHE_EXPIRES_IN)
         end
 

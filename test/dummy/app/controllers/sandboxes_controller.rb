@@ -1,8 +1,7 @@
 class SandboxesController < ApplicationController
   def show
     @content = session[:sandbox_content]
-
-    # fresh_when etag: @content
+    fresh_when etag: @content
   end
 
   def create
