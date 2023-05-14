@@ -383,6 +383,23 @@ class DiffTest < ActiveSupport::TestCase
     ]
   end
 
+  test "replace an element with text" do
+    from_html = <<-HTML
+      <root>
+        <p>Hola</p>
+      </root>
+    HTML
+
+    to_html = <<-HTML
+      <root>
+        Adios
+      </root>
+    HTML
+
+    assert_diff from_html, to_html, [
+      { type: :replace, selector: "0/0", text: "Adios" }
+    ]
+  end
 
   private
     def assert_diff(from_html_string, to_html_string, expected_changes)

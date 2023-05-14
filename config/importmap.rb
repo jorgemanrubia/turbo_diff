@@ -1,5 +1,2 @@
-pin "turbo_diff", to: "turbo_diff/index.js", preload: true
-pin "diff_changes", to: "turbo_diff/diff_changes.js", preload: true
-pin "install_turbo_diff", to: "turbo_diff/install_turbo_diff.js", preload: true
-
+pin_all_from TurboDiff::Engine.root.join("app/javascript/turbo_diff"), under: "turbo_diff", to: "turbo_diff"
 pin "@hotwired/turbo-rails", to: "turbo.min.js", preload: true

@@ -1,10 +1,14 @@
-<h1>Sandbox</h1>
+<section id="output">
+  <h1>Sandbox</h1>
 
-<%= @content&.html_safe %>
+  <%= @content&.html_safe %>
+</section>
 
-<h2>New content</h2>
+<section id="source">
+  <h2>New content</h2>
 
-<%= form_tag sandbox_path, method: :post do %>
-  <%= text_area_tag :sandbox_content, @content, style: "height: 300px; width: 100%;" %>
-  <%= submit_tag "Submit" %>
-<% end %>
+  <%= form_tag sandbox_path, method: :post do %>
+    <%= text_area_tag :sandbox_content, @content, style: "height: 300px; width: 100%;" %>
+    <%= submit_tag "Submit" %>
+  <% end %>
+</section>

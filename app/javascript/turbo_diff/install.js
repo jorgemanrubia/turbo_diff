@@ -1,4 +1,4 @@
-import { DiffChanges } from "diff_changes"
+import { Changes } from "turbo_diff/changes"
 
 const initialEtag = document.querySelector("meta[name='turbo-etag']").content
 
@@ -16,7 +16,7 @@ addEventListener("turbo:before-fetch-response", async function (event) {
   const etag = response.headers.get("Etag")
   const changes = await response.json()
 
-  new DiffChanges(document.documentElement, changes).apply()
+  new Changes(document.documentElement, changes).apply()
 
   event.preventDefault()
   Turbo.navigator.currentEtag = etag
