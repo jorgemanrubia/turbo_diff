@@ -29,8 +29,7 @@ class TurboDiff::Middleware
         cache_current_response if cacheable?
 
         if processable?
-          response.content_type = TURBO_DIFF_MIME_TYPE
-          response.body = TurboDiff.diff(cached_response_html, response.body).to_json
+          convert_into_turbo_diff_response
           true
         end
       end
@@ -57,6 +56,12 @@ class TurboDiff::Middleware
 
         def cache_key(etag)
           "#{request.session.id}-#{request.path}-#{etag}"
+        end
+
+        def convert_into_turbo_diff_response
+          response.content_type = TURBO_DIFF_MIME_TYPE
+          response.body = TurboDiff.diff(cached_response_html, response.body).to_json
+          response.cache_control[:no_store] = true
         end
 
         def cacheable?
