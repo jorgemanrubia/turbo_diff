@@ -13,6 +13,10 @@ addEventListener("turbo:before-fetch-request", function (event) {
 
 addEventListener("turbo:before-fetch-response", async function (event) {
   const response = event.detail.fetchResponse.response;
+
+  if (!response.headers.get("Content-Type").includes("text/vnd.turbo-diff.json"))
+    return;
+
   const etag = response.headers.get("Etag")
   const changes = await response.json()
 
