@@ -125,21 +125,21 @@ class DiffTest < ActiveSupport::TestCase
   test "insert missing children at the root where it can't match existing nodes by position" do
     from_html = <<-HTML
       <root>
-        <child-2></child-2>
+        <child-2>Child 2 contents</child-2>
       </root>
     HTML
 
     to_html = <<-HTML
       <root>
         <child-1></child-1>
-        <child-2></child-2>
+        <child-2>Child 2 contents</child-2>
         <child-3></child-3>
       </root>
     HTML
 
     assert_diff from_html, to_html, [
       { type: :replace, selector: "0/0", html: "<child-1></child-1>" },
-      { type: :insert, selector: "0/1", html: "<child-2></child-2>" },
+      { type: :insert, selector: "0/1", html: "<child-2>Child 2 contents</child-2>" },
       { type: :insert, selector: "0/2", html: "<child-3></child-3>" }
     ]
   end
@@ -174,14 +174,14 @@ class DiffTest < ActiveSupport::TestCase
   test "insert missing children at the root matching by id" do
     from_html = <<-HTML
       <root>
-        <child-2 id="2"></child-2>
+        <child-2 id="2">Child 2 content</child-2>
       </root>
     HTML
 
     to_html = <<-HTML
       <root>
         <child-1></child-1>
-        <child-2 id="2"></child-2>
+        <child-2 id="2">Child 2 content</child-2>
         <child-3></child-3>
       </root>
     HTML
@@ -191,6 +191,68 @@ class DiffTest < ActiveSupport::TestCase
       { type: :insert, selector: "0/2", html: "<child-3></child-3>" }
     ]
   end
+
+  test "insert missing children at the root matching by id considering content" do
+    from_html = <<-HTML
+      <root>
+        <child-2 id="2">Child 2 content</child-2>
+      </root>
+    HTML
+
+    to_html = <<-HTML
+      <root>
+        <child-1></child-1>
+        <child-2 id="2">Child 2 content</child-2>
+        <child-3></child-3>
+      </root>
+    HTML
+
+    assert_diff from_html, to_html, [
+      { type: :insert, selector: "0/0", html: "<child-1></child-1>" },
+      { type: :insert, selector: "0/2", html: "<child-3></child-3>" }
+    ]
+  end
+
+  test "insert missing children aand replacing attributes" do
+    from_html = <<-HTML
+      <root>
+        <child-2 id="2">Child 2 content</child-2>
+      </root>
+    HTML
+
+    to_html = <<-HTML
+      <root data-new="attribute">
+        <child-1></child-1>
+        <child-2 id="2">Child 2 content</child-2>
+        <child-3></child-3>
+      </root>
+    HTML
+
+    assert_diff from_html, to_html, [
+      { type: :attributes, selector: "0", added: { "data-new": "attribute" } },
+      { type: :insert, selector: "0/0", html: "<child-1></child-1>" },
+      { type: :insert, selector: "0/2", html: "<child-3></child-3>" }
+    ]
+  end
+
+  test "replace node text matching by id" do
+    from_html = <<-HTML
+      <root>
+        <child-2 id="2">Child 2 content</child-2>
+      </root>
+    HTML
+
+    to_html = <<-HTML
+      <root>
+        <child-2 id="2">Child 2 new content</child-2>
+      </root>
+    HTML
+
+    assert_diff from_html, to_html, [
+      { type: :replace, selector: "0/0/0", text: "Child 2 new content" }
+    ]
+  end
+
 
   test "replace root attributes" do
     from_html = <<-HTML

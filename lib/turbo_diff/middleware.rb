@@ -60,8 +60,17 @@ class TurboDiff::Middleware
 
         def convert_into_turbo_diff_response
           response.content_type = TURBO_DIFF_MIME_TYPE
-          response.body = TurboDiff.diff(cached_response_html, response.body).to_json
+          response.body = calculate_diff.to_json
           response.cache_control[:no_store] = true
+        end
+
+        def calculate_diff
+          result = nil
+          string_1 = cached_response_html
+          string_2 = response.body
+          total_time = Benchmark.realtime { result = TurboDiff.diff(string_1, string_2) }
+          Rails.logger.info("Diff time: #{total_time}")
+          result
         end
 
         def cacheable?

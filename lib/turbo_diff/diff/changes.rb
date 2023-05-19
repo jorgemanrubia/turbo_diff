@@ -23,6 +23,7 @@ class TurboDiff::Diff::Changes
           add_changes_from_children(from_node, to_node, cursor)
         elsif same_name?(from_node, to_node)
           add_attribute_changes(from_node, to_node, cursor)
+          add_changes_from_children(from_node, to_node, cursor)
         else
           changes << TurboDiff::Change.replace(cursor.to_selector, **change_properties_for(to_node))
         end
@@ -58,7 +59,7 @@ class TurboDiff::Diff::Changes
 
       # Matching "from" by id has priority
       from_nodes.each do |from_node|
-        if matched_to_node = to_nodes_by_id[from_node["id"]].shift
+        if matched_to_node = to_nodes_by_id[from_node["id"]]&.shift
 
           # Add missing nodes before the matched node
           index = to_nodes.index(matched_to_node)
