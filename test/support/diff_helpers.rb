@@ -11,9 +11,9 @@ module DiffHelpers
 
   def parse_html(html_string, strip_blank_spaces: true)
     html_node = if html_string.include?("<html>")
-      Nokogiri::HTML5(html_string)
+                  Nokolexbor.HTML(html_string)
     else
-      Nokogiri::HTML5.fragment(html_string)
+                  Nokolexbor::DocumentFragment.parse(html_string)
     end
 
     strip_html_blank_spaces(html_node) if strip_blank_spaces

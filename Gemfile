@@ -10,3 +10,4 @@ gem "sqlite3"
 gem "rubocop-37signals", bc: "house-style", require: false
 gem "puma"
 gem "propshaft"
+gem "nokolexbor"
