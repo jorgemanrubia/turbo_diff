@@ -47,7 +47,7 @@ class TurboDiff::Diff::Changes
     end
 
     def diffable_nodes(nodes)
-      nodes.find_all { |node| (node.text? && node.text.present?) || node.element? }
+      nodes.find_all { |node| (node.text? && node.text.present?) || (node.element? && !node["data-turbo-diff-ignore"]) }
     end
 
     def map_nodes(from_nodes, to_nodes)
@@ -74,18 +74,12 @@ class TurboDiff::Diff::Changes
 
       # Replacement by equality
       from_nodes.each.with_index do |from_node, index|
-        to_node = to_nodes[index]
-
         next if processed_from_nodes.include?(from_node)
 
-        unless to_node
-          mapped_nodes << [ from_node, nil, index ]
-          processed_from_nodes << from_node
-          next
-        end
+        if to_node = to_nodes.find { can_replace?(from_node, _1) }
+          next if processed_to_nodes.include?(to_node)
 
-        if can_replace?(from_node, to_node)
-          mapped_nodes << [ from_node, to_node, index ]
+          mapped_nodes << [ from_node, to_node, to_nodes.index(to_node) ]
           processed_to_nodes << to_node
           processed_from_nodes << from_node
         end
@@ -95,11 +89,24 @@ class TurboDiff::Diff::Changes
       from_nodes.each.with_index do |from_node, index|
         to_node = to_nodes[index]
 
-        next if !to_node || processed_from_nodes.include?(from_node) ||  processed_to_nodes.include?(to_node)
+        next if !to_node || processed_from_nodes.include?(from_node) || processed_to_nodes.include?(to_node)
+
+        unless to_node
+          mapped_nodes << [ from_node, nil, index ]
+          processed_from_nodes << from_node
+          next
+        end
 
         mapped_nodes << [ from_node, to_node, index ]
         processed_to_nodes << to_node
         processed_from_nodes << from_node
+      end
+
+      # Rest of "from" nodes
+      from_nodes.each.with_index do |from_node, i|
+        next if processed_from_nodes.include?(from_node)
+        mapped_nodes << [ from_node, nil, i ]
+        processed_to_nodes << from_node
       end
 
       # Rest of "to" nodes
@@ -149,7 +156,7 @@ class TurboDiff::Diff::Changes
     end
 
     def can_replace?(node_1, node_2)
-      same_name?(node_1, node_2) || same_text?(node_1, node_2)
+      equal_nodes?(node_1, node_2)
     end
 
     def same_name?(node_1, node_2)

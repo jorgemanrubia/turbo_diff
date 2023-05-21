@@ -138,9 +138,52 @@ class DiffTest < ActiveSupport::TestCase
     HTML
 
     assert_diff from_html, to_html, [
-      { type: :replace, selector: "0/0", html: "<child-1></child-1>" },
-      { type: :insert, selector: "0/1", html: "<child-2>Child 2 contents</child-2>" },
+      { type: :insert, selector: "0/0", html: "<child-1></child-1>" },
       { type: :insert, selector: "0/2", html: "<child-3></child-3>" }
+    ]
+  end
+
+  test "insert missing children at the root where it can match existing nodes by type and attributes" do
+    from_html = <<-HTML
+      <root>
+        <child data-attribute="value"></child>
+      </root>
+    HTML
+
+    to_html = <<-HTML
+      <root>
+        <child></child>
+        <child data-attribute="value">Child contents</child>
+        <child></child>
+      </root>
+    HTML
+
+    assert_diff from_html, to_html, [
+      { type: :insert, selector: "0/1/0", text: "Child contents" },
+      { type: :insert, selector: "0/0", html: "<child></child>" },
+      { type: :insert, selector: "0/2", html: "<child></child>" }
+    ]
+  end
+
+  test "delete children at the root where it can match existing nodes by type and attributes" do
+    from_html = <<-HTML
+      <root>
+        <child data-attribute="value">Child contents</child>
+      </root>
+    HTML
+
+    to_html = <<-HTML
+      <root>
+        <child></child>
+        <child data-attribute="value"></child>
+        <child></child>
+      </root>
+    HTML
+
+    assert_diff from_html, to_html, [
+      { type: :delete, selector: "0/1/0" },
+      { type: :insert, selector: "0/0", html: "<child></child>" },
+      { type: :insert, selector: "0/2", html: "<child></child>" }
     ]
   end
 
@@ -403,8 +446,7 @@ class DiffTest < ActiveSupport::TestCase
     HTML
 
     assert_diff from_html, to_html, [
-      { type: :delete, selector: "0/1" },
-      { type: :replace, selector: "0/0", html: "<child-2></child-2>" }
+      { type: :delete, selector: "0/0" }
     ]
   end
 
