@@ -71,9 +71,9 @@ class TurboDiff::Middleware
           total_time = Benchmark.realtime { result = TurboDiff.diff(from_html, to_html) }
           Rails.logger.info("Diff time: #{total_time}")
 
-          out_folder = "/Users/jorge/Work/basecamp/turbo_diff/test/fixtures/files"
-          File.open(File.join(out_folder, "from.html"), "w") { |file| file.write(from_html) }
-          File.open(File.join(out_folder, "to.html"), "w") { |file| file.write(to_html) }
+          # out_folder = "/Users/jorge/Work/basecamp/turbo_diff/test/fixtures/files"
+          # File.open(File.join(out_folder, "from.html"), "w") { |file| file.write(from_html) }
+          # File.open(File.join(out_folder, "to.html"), "w") { |file| file.write(to_html) }
 
           result
         end
