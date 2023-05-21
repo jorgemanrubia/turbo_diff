@@ -41,7 +41,7 @@ class TurboDiff::Diff::Changes
     end
 
     def for_each_children(from_node, to_node)
-      map_nodes(diffable_nodes(from_node.children), diffable_nodes(to_node.children)).each.with_index do |(from_child, to_child), index|
+      map_nodes(diffable_nodes(from_node.children), diffable_nodes(to_node.children)).each do |from_child, to_child, index|
         yield from_child, to_child, index
       end
     end
@@ -53,50 +53,59 @@ class TurboDiff::Diff::Changes
     def map_nodes(from_nodes, to_nodes)
       mapped_nodes = []
 
-      to_nodes_by_id = to_nodes.group_by { |node| node["id"] }
+      to_nodes_by_id = to_nodes.filter { _1["id"] }.group_by { |node| node["id"] }
       processed_to_nodes = Set.new
       processed_from_nodes = Set.new
 
       # Matching "from" by id has priority
-      from_nodes.each do |from_node|
+      from_nodes.each.with_index do |from_node, index|
+        next unless from_node["id"]
+
         if matched_to_node = to_nodes_by_id[from_node["id"]]&.shift
-
-          # Add missing nodes before the matched node
-          index = to_nodes.index(matched_to_node)
-          0.upto(index - 1) do |i|
-            to_node = to_nodes[i]
-            next if processed_to_nodes.include?(to_node)
-
-            mapped_nodes << [ nil, to_node ]
-            processed_to_nodes << to_node
-          end
-
           # Process the node matched by id
-          mapped_nodes << [ from_node, matched_to_node ]
+          mapped_nodes << [ from_node, matched_to_node, index ]
           processed_to_nodes << matched_to_node
+          processed_from_nodes << from_node
+        else
+          mapped_nodes << [ from_node, nil, index ]
           processed_from_nodes << from_node
         end
       end
 
-      # Rest of "from" nodes
+      # Replacement by equality
       from_nodes.each.with_index do |from_node, index|
         to_node = to_nodes[index]
-        next if processed_from_nodes.include?(from_node) || processed_to_nodes.include?(to_node)
 
-        # If same position, name and attributes, we consider it a match
-        if equal_nodes?(from_node, to_node)
-          mapped_nodes << [ from_node, to_node ]
-          processed_to_nodes << to_node
-        else
-          mapped_nodes << [ from_node, nil ]
+        next if processed_from_nodes.include?(from_node)
+
+        unless to_node
+          mapped_nodes << [ from_node, nil, index ]
+          processed_from_nodes << from_node
+          next
         end
+
+        if can_replace?(from_node, to_node)
+          mapped_nodes << [ from_node, to_node, index ]
+          processed_to_nodes << to_node
+          processed_from_nodes << from_node
+        end
+      end
+
+      # Replacement by position
+      from_nodes.each.with_index do |from_node, index|
+        to_node = to_nodes[index]
+
+        next if !to_node || processed_from_nodes.include?(from_node) ||  processed_to_nodes.include?(to_node)
+
+        mapped_nodes << [ from_node, to_node, index ]
+        processed_to_nodes << to_node
         processed_from_nodes << from_node
       end
 
       # Rest of "to" nodes
-      to_nodes.each do |to_node|
+      to_nodes.each.with_index do |to_node, i|
         next if processed_to_nodes.include?(to_node)
-        mapped_nodes << [ nil, to_node ]
+        mapped_nodes << [ nil, to_node, i ]
         processed_to_nodes << to_node
       end
 
@@ -137,6 +146,10 @@ class TurboDiff::Diff::Changes
           same_text?(node_1, node_2)
         end
       end
+    end
+
+    def can_replace?(node_1, node_2)
+      same_name?(node_1, node_2) || same_text?(node_1, node_2)
     end
 
     def same_name?(node_1, node_2)

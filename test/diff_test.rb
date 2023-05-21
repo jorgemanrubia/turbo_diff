@@ -213,7 +213,7 @@ class DiffTest < ActiveSupport::TestCase
     ]
   end
 
-  test "insert missing children aand replacing attributes" do
+  test "insert missing children and replacing attributes" do
     from_html = <<-HTML
       <root>
         <child-2 id="2">Child 2 content</child-2>
@@ -289,9 +289,9 @@ class DiffTest < ActiveSupport::TestCase
     HTML
 
     assert_diff from_html, to_html, [
-      { type: :attributes, selector: "0/0", added: { attribute_1: "a" }, deleted: [ "attribute_2" ] },
       { type: :attributes, selector: "0/1", added: { id: "2", class: "some-other-class" } },
-      { type: :attributes, selector: "0/2", deleted: [ "attribute-to-delete" ] }
+      { type: :attributes, selector: "0/0", added: { attribute_1: "a" }, deleted: [ "attribute_2" ] },
+    { type: :attributes, selector: "0/2", deleted: [ "attribute-to-delete" ] }
     ]
   end
 
@@ -314,6 +314,80 @@ class DiffTest < ActiveSupport::TestCase
     ]
   end
 
+  test "delete elements matching by id" do
+    from_html = <<-HTML
+      <root>
+        <child-1 id="1"></child-1>
+        <child-2 id="2"></child-2>
+        <child-3 id="3"></child-3>
+      </root>
+    HTML
+
+    to_html = <<-HTML
+      <root>
+        <child-3 id="3"></child-3>
+      </root>
+    HTML
+
+    assert_diff from_html, to_html, [
+      { type: :delete, selector: "0/0" },
+      { type: :delete, selector: "0/1" }
+    ]
+  end
+
+  test "delete and insert elements matching by id" do
+    from_html = <<-HTML
+      <root>
+        <child-1 id="1"></child-1>
+        <child-2 id="2"></child-2>
+        <child-3 id="3"></child-3>
+      </root>
+    HTML
+
+    to_html = <<-HTML
+      <root>
+        <child-3 id="3"></child-3>
+        <child-4 id="4"></child-4>
+        <child-5 id="5"></child-5>
+      </root>
+    HTML
+
+    assert_diff from_html, to_html, [
+      { type: :delete, selector: "0/0" },
+      { type: :delete, selector: "0/1" },
+      { type: :insert, selector: "0/1", "html"=>%(<child-4 id="4"></child-4>) },
+      { type: :insert, selector: "0/2", "html"=>%(<child-5 id="5"></child-5>) }
+    ]
+  end
+
+  test "delete and insert elements matching by id with leading unmatching element" do
+    from_html = <<-HTML
+      <root>
+        <child-a></child-a>
+        <child-1 id="1"></child-1>
+        <child-2 id="2"></child-2>
+        <child-3 id="3"></child-3>
+      </root>
+    HTML
+
+    to_html = <<-HTML
+      <root>
+        <child-b></child-b>
+        <child-3 id="3"></child-3>
+        <child-4 id="4"></child-4>
+        <child-5 id="5"></child-5>
+      </root>
+    HTML
+
+    assert_diff from_html, to_html, [
+      { type: :delete, selector: "0/1" },
+      { type: :delete, selector: "0/2" },
+      { type: :replace, selector: "0/0", html: "<child-b></child-b>" },
+      { type: :insert, selector: "0/2", "html"=>%(<child-4 id="4"></child-4>) },
+      { type: :insert, selector: "0/3", "html"=>%(<child-5 id="5"></child-5>) }
+    ]
+  end
+
   test "delete and replace elements" do
     from_html = <<-HTML
       <root>
@@ -329,8 +403,8 @@ class DiffTest < ActiveSupport::TestCase
     HTML
 
     assert_diff from_html, to_html, [
-      { type: :replace, selector: "0/0", html: "<child-2></child-2>" },
-      { type: :delete, selector: "0/1" }
+      { type: :delete, selector: "0/1" },
+      { type: :replace, selector: "0/0", html: "<child-2></child-2>" }
     ]
   end
 
@@ -461,6 +535,14 @@ class DiffTest < ActiveSupport::TestCase
     assert_diff from_html, to_html, [
       { type: :replace, selector: "0/0", text: "Adios" }
     ]
+  end
+
+  test "from middleware" do
+    out_folder = "/Users/jorge/Work/basecamp/turbo_diff/test/fixtures/files"
+    from_html = File.read(File.join(out_folder, "from.html"))
+    to_html = File.read(File.join(out_folder, "to.html"))
+
+    assert_diff from_html, to_html, []
   end
 
   private
