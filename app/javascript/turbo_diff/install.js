@@ -1,12 +1,15 @@
 import { Changes } from "turbo_diff/changes"
 
-const initialEtag = document.querySelector("meta[name='turbo-etag']").content
+const initialEtag = document.querySelector("meta[name='turbo-etag']")?.content
 
 addEventListener("turbo:before-fetch-request", function (event) {
   if(!event.target.matches("[data-turbo-diff]"))
     return
 
   Turbo.navigator.currentEtag = Turbo.navigator.currentEtag || initialEtag
+
+  if(!Turbo.navigator.currentEtag)
+    return
 
   const headers = event.detail.fetchOptions.headers;
   headers["Accept"] = ["text/vnd.turbo-diff.json", headers["Accept"]].join(", ")
@@ -23,6 +26,11 @@ addEventListener("turbo:before-fetch-response", async function (event) {
   const etag = response.headers.get("Etag")
   const changes = await response.json()
 
+  document.dispatchEvent(new CustomEvent("turbo:before-diff-render", { detail: { changes: changes } }))
+
+
+  document.querySelector(".turbo-progress-bar")?.setAttribute("data-turbo-diff-ignore", "")
+  console.debug("Es", document.querySelector(".turbo-progress-bar"));
   new Changes(document.documentElement, changes).apply()
 
   event.preventDefault()
