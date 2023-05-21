@@ -55,7 +55,7 @@ class TurboDiff::Middleware
         end
 
         def cache_key(etag)
-          "#{request.session.id}-#{request.path}-#{etag}"
+          "#{request.session.id}-#{etag}"
         end
 
         def convert_into_turbo_diff_response
@@ -66,10 +66,15 @@ class TurboDiff::Middleware
 
         def calculate_diff
           result = nil
-          string_1 = cached_response_html
-          string_2 = response.body
-          total_time = Benchmark.realtime { result = TurboDiff.diff(string_1, string_2) }
+          from_html = cached_response_html
+          to_html = response.body
+          total_time = Benchmark.realtime { result = TurboDiff.diff(from_html, to_html) }
           Rails.logger.info("Diff time: #{total_time}")
+
+          out_folder = "/Users/jorge/Work/basecamp/turbo_diff/test/fixtures/files"
+          File.open(File.join(out_folder, "from.html"), "w") { |file| file.write(from_html) }
+          File.open(File.join(out_folder, "to.html"), "w") { |file| file.write(to_html) }
+
           result
         end
 

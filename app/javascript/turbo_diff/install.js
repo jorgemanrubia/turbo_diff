@@ -3,6 +3,9 @@ import { Changes } from "turbo_diff/changes"
 const initialEtag = document.querySelector("meta[name='turbo-etag']").content
 
 addEventListener("turbo:before-fetch-request", function (event) {
+  if(!event.target.matches("[data-turbo-diff]"))
+    return
+
   Turbo.navigator.currentEtag = Turbo.navigator.currentEtag || initialEtag
 
   const headers = event.detail.fetchOptions.headers;
