@@ -159,7 +159,7 @@ class DiffTest < ActiveSupport::TestCase
     HTML
 
     assert_diff from_html, to_html, [
-      { type: :insert, selector: "0/1/0", text: "Child contents" },
+      { type: :insert, selector: "0/0/0", text: "Child contents" },
       { type: :insert, selector: "0/0", html: "<child></child>" },
       { type: :insert, selector: "0/2", html: "<child></child>" }
     ]
@@ -181,7 +181,7 @@ class DiffTest < ActiveSupport::TestCase
     HTML
 
     assert_diff from_html, to_html, [
-      { type: :delete, selector: "0/1/0" },
+      { type: :delete, selector: "0/0/0" },
       { type: :insert, selector: "0/0", html: "<child></child>" },
       { type: :insert, selector: "0/2", html: "<child></child>" }
     ]
@@ -426,8 +426,8 @@ class DiffTest < ActiveSupport::TestCase
       { type: :delete, selector: "0/1" },
       { type: :delete, selector: "0/2" },
       { type: :replace, selector: "0/0", html: "<child-b></child-b>" },
-      { type: :insert, selector: "0/2", "html"=>%(<child-4 id="4"></child-4>) },
-      { type: :insert, selector: "0/3", "html"=>%(<child-5 id="5"></child-5>) }
+      { type: :insert, selector: "0/2", html: %(<child-4 id="4"></child-4>) },
+      { type: :insert, selector: "0/3", html: %(<child-5 id="5"></child-5>) }
     ]
   end
 
@@ -447,6 +447,33 @@ class DiffTest < ActiveSupport::TestCase
 
     assert_diff from_html, to_html, [
       { type: :delete, selector: "0/0" }
+    ]
+  end
+
+  test "delete and replace elements matching by equality" do
+    from_html = <<-HTML
+      <root>
+        <child data-1="v1"></child>
+        <child data-3="v3">
+          <child data-3_1="v31">
+          </child>
+        </child>
+      </root>
+    HTML
+
+    to_html = <<-HTML
+      <root>
+        <child data-1="v1"></child>
+        <child data-2="v2"></child>
+        <child data-3="v3">
+          <child data-3_1="v31_changed"></child>
+        </child>
+      </root>
+    HTML
+
+    assert_diff from_html, to_html, [
+      { type: :attributes, selector: "0/1/0", added: { "data-3_1" => "v31_changed" } },
+      { type: :insert, selector: "0/1", html: %(<child data-2="v2"></child>) }
     ]
   end
 

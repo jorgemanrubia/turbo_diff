@@ -11,7 +11,7 @@ export class InsertChange extends Change {
     super.log("INSERT", this.position, this.parentNode, this.change)
 
     if(this.childNodes[this.position]) {
-      this.childNodes[this.position][this.replaceAction]("afterend", this.replaceContent)
+      this.childNodes[this.position][this.replaceAction]("beforebegin", this.replaceContent)
     }
     else {
       this.parentNode[this.replaceAction]("beforeend", this.replaceContent)

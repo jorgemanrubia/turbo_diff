@@ -79,7 +79,7 @@ class TurboDiff::Diff::Changes
         if to_node = to_nodes.find { can_replace?(from_node, _1) }
           next if processed_to_nodes.include?(to_node)
 
-          mapped_nodes << [ from_node, to_node, to_nodes.index(to_node) ]
+          mapped_nodes << [ from_node, to_node, index ]
           processed_to_nodes << to_node
           processed_from_nodes << from_node
         end
