@@ -606,13 +606,35 @@ class DiffTest < ActiveSupport::TestCase
     ]
   end
 
-  test "from middleware" do
-    out_folder = "/Users/jorge/Work/basecamp/turbo_diff/test/fixtures/files"
-    from_html = File.read(File.join(out_folder, "from.html"))
-    to_html = File.read(File.join(out_folder, "to.html"))
+  test "ignore ignorable elements" do
+    from_html = <<-HTML
+      <root>
+        <foo data-turbo-diff-ignore></foo>
+        <p>Hola</p>
+        <input name="authenticity_token" type="hidden" value="123">
+      </root>
+    HTML
 
-    assert_diff from_html, to_html, []
+    to_html = <<-HTML
+      <root>
+        <bar data-turbo-diff-ignore></bar>
+        <p>Adios</p>
+        <input name="authenticity_token" type="hidden" value="789">
+      </root>
+    HTML
+
+    assert_diff from_html, to_html, [
+      { type: :replace, selector: "0/0/0", text: "Adios" }
+    ]
   end
+
+  # test "from middleware" do
+  #   out_folder = "/Users/jorge/Work/basecamp/turbo_diff/test/fixtures/files"
+  #   from_html = File.read(File.join(out_folder, "from.html"))
+  #   to_html = File.read(File.join(out_folder, "to.html"))
+  #
+  #   assert_diff from_html, to_html, []
+  # end
 
   private
     def assert_diff(from_html_string, to_html_string, expected_changes)
