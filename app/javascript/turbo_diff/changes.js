@@ -33,6 +33,8 @@ export class Changes {
       for (let i = 0; i < children.length; i++) {
         const child = children[i]
         const childSelector = `${selector}/${i}`
+        // if(child.setAttribute)
+        //   child.setAttribute("data-debug-turbo-diff-selector", childSelector)
         group(child, childSelector)
       }
     }

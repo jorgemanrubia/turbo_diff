@@ -47,7 +47,7 @@ class TurboDiff::Diff::Changes
     end
 
     def diffable_nodes(nodes)
-      nodes.find_all { |node| (node.text? && node.text.present?) || (node.element? && !node["data-turbo-diff-ignore"]) }
+      nodes.find_all { |node| (node.text? && node.text.present?) || (node.element? && !node.matches?("[data-turbo-diff-ignore],[name=authenticity_token]")) }
     end
 
     def map_nodes(from_nodes, to_nodes)

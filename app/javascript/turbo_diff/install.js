@@ -30,7 +30,6 @@ addEventListener("turbo:before-fetch-response", async function (event) {
 
 
   document.querySelector(".turbo-progress-bar")?.setAttribute("data-turbo-diff-ignore", "")
-  console.debug("Es", document.querySelector(".turbo-progress-bar"));
   new Changes(document.documentElement, changes).apply()
 
   event.preventDefault()
