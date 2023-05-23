@@ -47,7 +47,13 @@ class TurboDiff::Diff::Changes
     end
 
     def diffable_nodes(nodes)
-      nodes.find_all { |node| (node.text? && node.text.present?) || (node.element? && !node.matches?("[data-turbo-diff-ignore],[name=authenticity_token]")) }
+      nodes.find_all { |node| (node.text? && node.text.present?) || (node.element? && !ignorable_node?(node)) }
+    end
+
+    def ignorable_node?(node)
+      # Manual attribute comparison much faster than using #matches?
+      node["data-turbo-diff-ignore"] ||
+        node.name == "input" && node["name"] == "authenticity_token"
     end
 
     def map_nodes(from_nodes, to_nodes)
