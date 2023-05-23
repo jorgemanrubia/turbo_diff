@@ -26,8 +26,7 @@ addEventListener("turbo:before-fetch-response", async function (event) {
   const etag = response.headers.get("Etag")
   const changes = await response.json()
 
-  document.dispatchEvent(new CustomEvent("turbo:before-diff-render", { detail: { changes: changes } }))
-
+  dispatchEvent(new CustomEvent("turbo:before-diff-render", { detail: { changes: changes } }))
 
   document.querySelector(".turbo-progress-bar")?.setAttribute("data-turbo-diff-ignore", "")
   new Changes(document.documentElement, changes).apply()
