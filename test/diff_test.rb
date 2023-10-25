@@ -334,7 +334,7 @@ class DiffTest < ActiveSupport::TestCase
     assert_diff from_html, to_html, [
       { type: :attributes, selector: "0/1", added: { id: "2", class: "some-other-class" } },
       { type: :attributes, selector: "0/0", added: { attribute_1: "a" }, deleted: [ "attribute_2" ] },
-    { type: :attributes, selector: "0/2", deleted: [ "attribute-to-delete" ] }
+      { type: :attributes, selector: "0/2", deleted: [ "attribute-to-delete" ] }
     ]
   end
 
@@ -414,12 +414,12 @@ class DiffTest < ActiveSupport::TestCase
     HTML
 
     to_html = <<-HTML
-      <root>
-        <child-b></child-b>
-        <child-3 id="3"></child-3>
-        <child-4 id="4"></child-4>
-        <child-5 id="5"></child-5>
-      </root>
+<root>
+  <child-b></child-b>
+  <child-3 id="3"></child-3>
+  <child-4 id="4"></child-4>
+  <child-5 id="5"></child-5>
+</root>
     HTML
 
     assert_diff from_html, to_html, [
@@ -429,6 +429,14 @@ class DiffTest < ActiveSupport::TestCase
       { type: :insert, selector: "0/2", html: %(<child-4 id="4"></child-4>) },
       { type: :insert, selector: "0/3", html: %(<child-5 id="5"></child-5>) }
     ]
+
+[
+  { type: :delete, selector: "0/1" },
+  { type: :delete, selector: "0/2" },
+  { type: :replace, selector: "0/0", html: "<child-b></child-b>" },
+  { type: :insert, selector: "0/2", html: %(<child-4 id="4"></child-4>) },
+  { type: :insert, selector: "0/3", html: %(<child-5 id="5"></child-5>) }
+]
   end
 
   test "delete and replace elements" do
