@@ -1,28 +1,7 @@
 # TurboDiff
-Short description and motivation.
 
-## Usage
-How to use my plugin.
+This is a Proof of Concept of server-side diffing for Turbo.
 
-## Installation
-Add this line to your application's Gemfile:
+It is meant as an exploratory exercise, not as a production-ready solution.
 
-```ruby
-gem "turbo_diff"
-```
-
-And then execute:
-```bash
-$ bundle
-```
-
-Or install it yourself as:
-```bash
-$ gem install turbo_diff
-```
-
-## Contributing
-Contribution directions go here.
-
-## License
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+[You can learn more about the it here](#).
